@@ -1,14 +1,15 @@
 
 const express = require("express");
 require("dotenv").config()
-const userRoutes = require("./routes/user.routes")
+const userRoutes = require("./src/routes/user.routes")
 
 
 //  initialize app
 const app = express()
 app.use(express.json())
 //  user routes
-app.use(userRoutes.routes)
+app.use("/user",userRoutes.routes)
+
 
 
 
