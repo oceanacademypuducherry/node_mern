@@ -1,0 +1,28 @@
+const express = require("express");
+const {
+  makeProduct,
+  makeMultipleProducts,
+  getAllProducts,
+  getProductById,
+  deleteProductById,
+  updateProductById,
+} = require("../controllers/product_controller");
+const route = express().router;
+
+// get all product
+route.get("/get-all", getAllProducts);
+// get specific product by id
+route.get("/get/:id", getProductById);
+// single product add
+route.post("/create", makeProduct);
+//  multiple products add
+route.post("/create-multiple", makeMultipleProducts);
+// delete specfic product by id
+route.delete("/delete/:id", deleteProductById);
+
+//  update product by id
+
+route.patch("/update/:id", updateProductById);
+module.exports = {
+  route,
+};
