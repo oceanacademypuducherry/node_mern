@@ -1,6 +1,6 @@
 const express = require("express");
 require("dotenv").config();
-// const userRoutes = require("./src/routes/user.routes");
+const userRoutes = require("./src/routes/user.routes");
 const productRoutes = require("./src/routes/product.routes");
 const mongoose = require("mongoose");
 
@@ -35,6 +35,7 @@ app.use(async (_, res, next) => {
 const portNo = process.env.PORT_NO || 3000;
 //  user routes
 app.use("/api/product", productRoutes.route);
+app.use("/api/auth", userRoutes.routes);
 
 app.listen(portNo, (err) => {
   if (err) {

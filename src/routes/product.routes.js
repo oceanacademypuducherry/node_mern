@@ -7,6 +7,7 @@ const {
   deleteProductById,
   updateProductById,
 } = require("../controllers/product_controller");
+const { verifyToken } = require("../middleware/authMiddleware");
 const route = express().router;
 
 // get all product
@@ -16,7 +17,7 @@ route.get("/get/:id", getProductById);
 // single product add
 route.post("/create", makeProduct);
 //  multiple products add
-route.post("/create-multiple", makeMultipleProducts);
+route.post("/create-multiple", verifyToken, makeMultipleProducts);
 // delete specfic product by id
 route.delete("/delete/:id", deleteProductById);
 
