@@ -11,7 +11,7 @@ const { verifyToken } = require("../middleware/authMiddleware");
 const route = express().router;
 
 // get all product
-route.get("/get-all", getAllProducts);
+route.get("/get-all", verifyToken, getAllProducts);
 // get specific product by id
 route.get("/get/:id", getProductById);
 // single product add

@@ -1,3 +1,4 @@
+const { UserModel } = require("../models/user.model");
 const { generateJWTtoken } = require("../utils/generateTokent");
 
 const userLogin = async (req, res) => {
@@ -9,12 +10,17 @@ const userLogin = async (req, res) => {
     });
   }
   try {
-    const user = {
-      name: "farhana",
-      email: "farahna@gmail.com",
-      id: "654asdlk53sakfd354",
-    };
-    const token = generateJWTtoken(user);
+    const user = await UserModel.findOne({ username, password }).select(
+      "-password -__v -token"
+    );
+    if (!user) {
+      return res.send({ message: "user not found", success: false });
+    }
+    console.log(user);
+    const token = generateJWTtoken({ _id: user._id, username: user.username });
+    user.token = token;
+    // await user.updateOne({ _id: user._id }, { token });
+    await user.save();
     res.send({
       message: "login successfully",
       token,
@@ -28,6 +34,23 @@ const userLogin = async (req, res) => {
   }
 };
 
+const registerUser = async (req, res) => {
+  const { username, password, email } = req.body;
+  try {
+    const user = { username, password, email };
+    const isUserPresent = await UserModel.findOne({ email, username });
+    console.log(isUserPresent);
+    if (isUserPresent) {
+      return res.send({ message: "user already exists", success: false });
+    }
+    const createdUser = await UserModel.insertOne(user);
+    res.send({ message: "user created successfully", data: createdUser });
+  } catch (error) {
+    res.send({ message: error.toString() });
+  }
+};
+
 module.exports = {
   userLogin,
+  registerUser,
 };

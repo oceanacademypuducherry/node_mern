@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
+const { UserModel } = require("../models/user.model");
 
-function verifyToken(req, res, next) {
+async function verifyToken(req, res, next) {
   if (!req.headers.authorization) {
-    res.send({ message: "please provide authorization header" });
+    return res.send({ message: "please provide authorization header" });
   }
   const { authorization } = req.headers;
   const authorizationList = authorization.split(" ");
@@ -14,13 +15,19 @@ function verifyToken(req, res, next) {
   try {
     console.log(process.env.JWT_SECRET);
     const user = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("-----------------------------------------------------");
+    console.log(user);
+    const isValidToken = await UserModel.findOne({ _id: user._id, token });
+    console.log(isValidToken);
+    if (!isValidToken) {
+      return res.send({ message: "token is mismatched" });
+    }
+
     req.id = user.id;
     next();
   } catch (error) {
-    res.send({ message: error.toString() });
+    res.send({ message: "token was expired" });
   }
-  //   console.log(headers);
-  res.send({ message: "token is verifying" });
 }
 
 module.exports = {
