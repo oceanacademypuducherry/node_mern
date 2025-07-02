@@ -98,6 +98,16 @@ const updateProductById = async (req, res) => {
   }
 };
 
+const getProductDetails = async (req, res) => {
+  try {
+    const { productIds } = req.body;
+    const data = await ProductModel.find({ _id: { $in: productIds } });
+    return res.send({ data });
+  } catch (error) {
+    res.status(400).send({ message: error.toString() });
+  }
+};
+
 module.exports = {
   makeProduct,
   makeMultipleProducts,
@@ -105,4 +115,5 @@ module.exports = {
   getProductById,
   deleteProductById,
   updateProductById,
+  getProductDetails,
 };

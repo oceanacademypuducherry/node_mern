@@ -4,9 +4,9 @@ const { generateJWTtoken } = require("../utils/generateTokent");
 const userLogin = async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
-    return res.send({
+    return res.status(400).send({
       message: "username or password required",
-      status: false,
+      success: false,
     });
   }
   try {
@@ -14,7 +14,9 @@ const userLogin = async (req, res) => {
       "-password -__v -token"
     );
     if (!user) {
-      return res.send({ message: "user not found", success: false });
+      return res
+        .status(404)
+        .send({ message: "user not found", success: false });
     }
     console.log(user);
     const token = generateJWTtoken({ _id: user._id, username: user.username });
@@ -24,12 +26,12 @@ const userLogin = async (req, res) => {
     res.send({
       message: "login successfully",
       token,
-      status: true,
+      success: true,
     });
   } catch (error) {
     res.send({
       message: error.toString(),
-      status: false,
+      success: false,
     });
   }
 };
@@ -44,9 +46,13 @@ const registerUser = async (req, res) => {
       return res.send({ message: "user already exists", success: false });
     }
     const createdUser = await UserModel.insertOne(user);
-    res.send({ message: "user created successfully", data: createdUser });
+    res.send({
+      message: "user created successfully",
+      data: createdUser,
+      success: true,
+    });
   } catch (error) {
-    res.send({ message: error.toString() });
+    res.send({ message: error.toString(), success: false });
   }
 };
 

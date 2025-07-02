@@ -5,9 +5,21 @@ const schema = new mongoose.Schema({
     type: String,
     unique: true,
   },
-  amount: {
+  price: {
     type: Number,
     required: true,
+  },
+  discount: {
+    type: Number,
+    required: true,
+  },
+  discription: {
+    type: String,
+    required: true,
+  },
+  image: {
+    type: String,
+    default: null,
   },
 });
 

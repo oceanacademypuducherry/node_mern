@@ -3,14 +3,16 @@ const { UserModel } = require("../models/user.model");
 
 async function verifyToken(req, res, next) {
   if (!req.headers.authorization) {
-    return res.send({ message: "please provide authorization header" });
+    return res
+      .status(404)
+      .send({ message: "please provide authorization header" });
   }
   const { authorization } = req.headers;
   const authorizationList = authorization.split(" ");
   const isBearer = authorizationList[0].startsWith("Bearer");
   const token = authorizationList[1];
   if (!isBearer || !token) {
-    return res.send({ message: "please give the token" });
+    return res.status(401).send({ message: "please give the token" });
   }
   try {
     console.log(process.env.JWT_SECRET);
@@ -26,7 +28,7 @@ async function verifyToken(req, res, next) {
     req.id = user.id;
     next();
   } catch (error) {
-    res.send({ message: "token was expired" });
+    res.status(401).send({ message: "token was expired" });
   }
 }
 

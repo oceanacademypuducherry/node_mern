@@ -3,10 +3,12 @@ require("dotenv").config();
 const userRoutes = require("./src/routes/user.routes");
 const productRoutes = require("./src/routes/product.routes");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 //  initialize app
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 const uri = process.env.MONGO_URI;
 
