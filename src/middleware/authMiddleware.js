@@ -24,8 +24,8 @@ async function verifyToken(req, res, next) {
     if (!isValidToken) {
       return res.send({ message: "token is mismatched" });
     }
-
-    req.id = user.id;
+    console.log(user.id, "------------------------------------");
+    req._id = user._id;
     next();
   } catch (error) {
     res.status(401).send({ message: "token was expired" });

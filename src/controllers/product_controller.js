@@ -102,9 +102,13 @@ const getProductDetails = async (req, res) => {
   try {
     const { productIds } = req.body;
     const data = await ProductModel.find({ _id: { $in: productIds } });
-    return res.send({ data });
+    return res.send({
+      data,
+      success: true,
+      message: "data fetched successfully",
+    });
   } catch (error) {
-    res.status(400).send({ message: error.toString() });
+    res.status(400).send({ message: error.toString(), success: false });
   }
 };
 

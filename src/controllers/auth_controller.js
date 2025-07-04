@@ -1,3 +1,4 @@
+const { ShippingAddressModel } = require("../models/shippingAddress.model");
 const { UserModel } = require("../models/user.model");
 const { generateJWTtoken } = require("../utils/generateTokent");
 
@@ -56,7 +57,37 @@ const registerUser = async (req, res) => {
   }
 };
 
+const createAddress = async (req, res) => {
+  try {
+    const { _id, body } = req;
+    if (!_id || body == undefined) {
+      return res
+        .status(400)
+        .send({ message: "something went wrong", success: false });
+    }
+
+    const { name, street, city, pincode, mobileNumber } = body;
+    const required = ["name", "street", "city", "pincode", "mobileNumber"];
+
+    if ((!name || !street, !city, !pincode, !mobileNumber)) {
+      return res
+        .status(400)
+        .send({ message: "something went wrong", success: false });
+    }
+
+    const doc = await ShippingAddressModel.create({ ...req.body, userId: _id });
+    await doc.save();
+    res
+      .status(201)
+      .send({ message: "shipping address created", success: true, data: doc });
+    // const address = await ShippingAddressModel.insertOne();
+  } catch (error) {
+    res.status(400).send({ message: err.toString(), success: false });
+  }
+};
+
 module.exports = {
   userLogin,
   registerUser,
+  createAddress,
 };
