@@ -15,10 +15,23 @@ const orderSchema = new mongoose.Schema(
     orderId: {
       type: mongoose.Schema.Types.ObjectId,
     },
-    products: {
-      type: Array,
-      required: true,
-    },
+    products: [
+      {
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+          ref: "products", // adjust if your product model is named differently
+        },
+        price: {
+          type: Number,
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

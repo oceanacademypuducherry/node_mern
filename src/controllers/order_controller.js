@@ -41,6 +41,57 @@ const createOrder = async (req, res) => {
   }
 };
 
+const getOrders = async (req, res) => {
+  try {
+    const { _id } = req;
+
+    const ordersWithProductDetails = await OrderModel.aggregate([
+      {
+        $unwind: "$products",
+      },
+      {
+        $lookup: {
+          from: "products", // name of the ProductModel collection
+          localField: "products.productId",
+          foreignField: "_id",
+          as: "productDetails",
+        },
+      },
+      {
+        $unwind: "$productDetails",
+      },
+
+      {
+        $addFields: {
+          "products.name": "$productDetails.name",
+          "products.discount": "$productDetails.discount",
+          "products.description": "$productDetails.discription",
+          "products.image": "$productDetails.image",
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          userId: { $first: "$userId" },
+          shippmentId: { $first: "$shippmentId" },
+          orderId: { $first: "$orderId" },
+          createdAt: { $first: "$createdAt" },
+          updatedAt: { $first: "$updatedAt" },
+          products: { $push: "$products" },
+        },
+      },
+    ]);
+    res.status(200).send({
+      ordersWithProductDetails,
+      message: "orders get successfully",
+      success: true,
+    });
+  } catch (error) {
+    res.status(400).send({ message: error.toString(), success: false });
+  }
+};
+
 module.exports = {
   createOrder,
+  getOrders,
 };
