@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const { OrderModel } = require("../models/order.model");
 const { ShippingAddressModel } = require("../models/shippingAddress.model");
 
@@ -45,7 +46,24 @@ const getOrders = async (req, res) => {
   try {
     const { _id } = req;
 
-    const ordersWithProductDetails = await OrderModel.aggregate([
+    const data = await OrderModel.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(_id),
+        },
+      },
+      {
+        $lookup: {
+          from: "shippingaddresses",
+          localField: "shippmentId",
+          foreignField: "_id",
+          as: "shippmentDetails",
+        },
+      },
+      {
+        $unwind: "$shippmentDetails",
+      },
+
       {
         $unwind: "$products",
       },
@@ -78,11 +96,13 @@ const getOrders = async (req, res) => {
           createdAt: { $first: "$createdAt" },
           updatedAt: { $first: "$updatedAt" },
           products: { $push: "$products" },
+          shippmentDetails: { $first: "$shippmentDetails" },
         },
       },
     ]);
+    // const data = await OrderModel.find({ userId: _id });
     res.status(200).send({
-      ordersWithProductDetails,
+      data,
       message: "orders get successfully",
       success: true,
     });
